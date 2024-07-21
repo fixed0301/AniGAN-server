@@ -5,6 +5,7 @@ import requests
 import os
 import torch
 from PIL import Image
+
 #from torchvision import transforms
 #from torchvision.utils import save_image
 #from src.trainer import Trainer
@@ -22,19 +23,23 @@ if not os.path.exists(download_folder):
 frame_path = 'frame_0.png' # 나중에 인풋받음
 reference_img_path = 'input_img_examples/1795111.png' # 연구컴에서 경로 확인
 
-def cropface(frame):
-    faces = RetinaFace.detect_faces(frame)
+
+def cropface(img_path):
+    faces = RetinaFace.detect_faces(img_path)
+    img = Image.open(img_path).convert("RGB")
+
     for faceNum in faces.keys():
-        identity = faces[f'{faceNum}']
+        identity = faces[faceNum]
         facial_area = identity["facial_area"]
-        landmarks = identity["landmarks"]
 
-        # highlight facial area
-        cv2.rectangle(frame, (facial_area[0], facial_area[1])
-                      , (facial_area[2], facial_area[3]), (255, 255, 255), 1)
+        # 얼굴 영역을 강조 (직사각형 그리기)
+        draw = ImageDraw.Draw(img)
+        draw.rectangle([facial_area[0], facial_area[1], facial_area[2], facial_area[3]], outline="white", width=2)
 
-    facial_img = frame[facial_area[1]: facial_area[3], facial_area[0]: facial_area[2]]
-    return facial_img
+        # 얼굴 영역을 잘라내기
+        facial_img = img.crop((facial_area[0], facial_area[1], facial_area[2], facial_area[3]))
+
+        return facial_img
 
 def _denorm(x):
     """Convert the range from [-1, 1] to [0, 1]."""
@@ -111,4 +116,4 @@ def download_images():
 
 
 if __name__ == '__main__':
-    download_images()
+    app.run()
