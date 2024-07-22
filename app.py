@@ -1,4 +1,4 @@
-# 이미지 찍고 전송, 서버에서 처리됐다 하면 지우는 역할
+#ss 이미지 찍고 전송, 서버에서 처리됐다 하면 지우는 역할
 # app 실행 후 capture_imgs 실행하기
 from flask import Flask, request, jsonify, send_from_directory, send_file
 from process import download_images
@@ -59,7 +59,7 @@ def process_images(anime_num, source_img_path):
         generated_img = trainer.model.evaluate_reference(content_tensor, reference_tensor)
         name_part, ext_part = os.path.splitext(os.path.basename(source_img_path))
         save_file_name = f"{name_part}_anigan{ext_part}"
-        save_file_path = os.path.join(output_dir, save_file_name)
+        save_file_path = os.path.join('result', save_file_name)
         save_image(_denorm(generated_img), save_file_path, nrow=1, padding=0)
         return save_file_path
 
